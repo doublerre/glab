@@ -62,9 +62,8 @@ export function AuthProvider({ children }) {
 			if (accessToken && isValidToken(accessToken)) {
 				setSession(accessToken);
 
-				const response = await axios.get(endpoints.auth.me);
-
-				const { user } = response.data;
+				await pb.collection('users').authRefresh();
+				const user = pb.authStore.model;
 
 				dispatch({
 					type: 'INITIAL',
