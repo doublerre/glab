@@ -185,6 +185,7 @@ export const paths = {
     proyectos: {
       root: `${ROOTS.SOLICITANTE}/proyectos`,
       new: `${ROOTS.SOLICITANTE}/proyectos/crear`,
+      edit: (id) => `${ROOTS.SOLICITANTE}/proyectos/${id}/editar`,
     }
 
   }

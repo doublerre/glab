@@ -13,6 +13,7 @@ import { LoadingScreen } from 'src/components/loading-screen';
 const IndexPage = lazy(() => import('src/pages/dashboard/solicitante/panel'));
 const ListPage = lazy(() => import('src/pages/dashboard/solicitante/proyectos/list'))
 const CreateProjectPage = lazy(() => import('src/pages/dashboard/solicitante/proyectos/new'))
+const EditProjectPage = lazy(() => import('src/pages/dashboard/solicitante/proyectos/edit'))
 
 export const solicitanteRoutes = [
     {
@@ -36,6 +37,7 @@ export const solicitanteRoutes = [
                   { element: <ListPage />, index: true },
                   { path: 'lista', element: <ListPage /> },
                   { path: 'crear', element: <CreateProjectPage /> },
+                  { path: ':id/editar', element: <EditProjectPage /> }
                 ],
               },
         ]

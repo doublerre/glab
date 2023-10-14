@@ -1,4 +1,3 @@
-import orderBy from 'lodash/orderBy';
 import isEqual from 'lodash/isEqual';
 import { useState, useCallback, useRef, useEffect } from 'react';
 // @mui
@@ -8,20 +7,15 @@ import Container from '@mui/material/Container';
 // routes
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
-// _mock
-import {
-  _jobs,
-} from 'src/_mock';
 // PocketBase
 import { pb } from "src/utils/pocketbase";
 // components
 import Iconify from 'src/components/iconify';
-import EmptyContent from 'src/components/empty-content';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
-import JobList from '../job-list';
-import JobSearch from '../job-search';
+import JobList from '../project-list';
+import JobSearch from '../project-search';
 import JobFiltersResult from '../job-filters-result';
 
 // ----------------------------------------------------------------------
@@ -47,12 +41,9 @@ export default function JobListView() {
       const empresasData = await pb.collection('proyectos').getFullList({ expand: "empresa_id", filter: `user_id="${pb.authStore.model?.id}"`});
       empresasRef.current = empresasData;
       setEmpresas(empresasData);
-      console.log(empresasData);
     };
     fetchData();
   }, []);
-
-  const [sortBy, setSortBy] = useState('latest');
 
   const [search, setSearch] = useState({
     query: '',
@@ -78,8 +69,8 @@ export default function JobListView() {
       }));
 
       if (inputValue) {
-        const results = _jobs.filter(
-          (job) => job.title.toLowerCase().indexOf(search.query.toLowerCase()) !== -1
+        const results = empresas.filter(
+          (job) => job.nombre.toLowerCase().indexOf(search.query.toLowerCase()) !== -1
         );
 
         setSearch((prevState) => ({
@@ -88,7 +79,7 @@ export default function JobListView() {
         }));
       }
     },
-    [search.query]
+    [search.query, empresas]
   );
 
   const handleResetFilters = useCallback(() => {
@@ -136,7 +127,7 @@ export default function JobListView() {
         action={
           <Button
             component={RouterLink}
-            href={paths.dashboard.job.new}
+            href={paths.solicitante.proyectos.new}
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >

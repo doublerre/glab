@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 // routes
 import { useParams } from 'src/routes/hooks';
 // sections
-import { JobEditView } from 'src/sections/job/view';
+import { JobEditView } from 'src/sections/Solicitante/panel/proyectos/view';
 
 // ----------------------------------------------------------------------
 
@@ -14,7 +14,7 @@ export default function JobEditPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Dashboard: Job Edit</title>
+        <title> Dashboard: Editar proyecto</title>
       </Helmet>
 
       <JobEditView id={`${id}`} />

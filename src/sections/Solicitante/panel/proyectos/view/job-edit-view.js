@@ -3,42 +3,60 @@ import PropTypes from 'prop-types';
 import Container from '@mui/material/Container';
 // routes
 import { paths } from 'src/routes/paths';
-// _mock
-import { _jobs } from 'src/_mock';
+// PocketBase
+import { pb } from "src/utils/pocketbase";
+// React
+import { useEffect, useState, useRef } from "react";
 // components
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
-import JobNewEditForm from '../job-new-edit-form';
+import JobNewEditForm from '../project-edit-form';
 
 // ----------------------------------------------------------------------
 
 export default function JobEditView({ id }) {
   const settings = useSettingsContext();
 
-  const currentJob = _jobs.find((job) => job.id === id);
+  const proyectoRef = useRef([])
+  const [Proyecto, setProyecto] = useState([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const currentProject = await pb.collection('proyectos').getOne(id)
+      proyectoRef.current = currentProject
+      setProyecto(currentProject)
+    };
+    fetchData();
+  }, [id]);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading="Edit"
+        heading="Editar proyecto"
         links={[
           {
             name: 'Dashboard',
-            href: paths.dashboard.root,
+            href: paths.solicitante.root,
           },
           {
-            name: 'Job',
-            href: paths.dashboard.job.root,
+            name: 'Proyectos',
+            href: paths.solicitante.proyectos.root,
           },
-          { name: currentJob?.title },
+          { name: Proyecto?.nombre },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
         }}
       />
-
-      <JobNewEditForm currentJob={currentJob} />
+      {Proyecto ? (
+        <JobNewEditForm currentProject={Proyecto} />
+      ) : (
+        <div>
+          <p>Cargando...</p>
+        </div>
+      )}
+      
     </Container>
   );
 }

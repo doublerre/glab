@@ -6,7 +6,7 @@ import { paths } from 'src/routes/paths';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
-import JobNewEditForm from '../job-new-edit-form';
+import JobNewEditForm from '../project-new-edit-form';
 
 // ----------------------------------------------------------------------
 

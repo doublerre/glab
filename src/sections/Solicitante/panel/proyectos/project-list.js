@@ -6,13 +6,18 @@ import Pagination, { paginationClasses } from '@mui/material/Pagination';
 // routes
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
+// PocketBase
+import { pb } from "src/utils/pocketbase";
+// Components
+import { useSnackbar } from 'src/components/snackbar';
 //
-import JobItem from './job-item';
+import JobItem from './project-item';
 
 // ----------------------------------------------------------------------
 
 export default function JobList({ jobs }) {
   const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleView = useCallback(
     (id) => {
@@ -23,14 +28,16 @@ export default function JobList({ jobs }) {
 
   const handleEdit = useCallback(
     (id) => {
-      router.push(paths.dashboard.job.edit(id));
+      router.push(paths.solicitante.proyectos.edit(id));
     },
     [router]
   );
 
-  const handleDelete = useCallback((id) => {
-    console.info('DELETE', id);
-  }, []);
+  const handleDelete = useCallback(async(id) => {
+    await pb.collection('proyectos').delete(id)
+    router.reload();
+    enqueueSnackbar('Proyecto eliminado correctamente');
+  }, [router, enqueueSnackbar]);
 
   return (
     <>

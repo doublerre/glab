@@ -30,6 +30,18 @@ import FormProvider, {
 export default function JobNewEditForm({ currentProject }) {
   const router = useRouter();
 
+  const empresasRef = useRef([]);
+  const [getEmpresas, setGetEmpresas] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const empresasData = await pb.collection('empresas').getFullList({ filter: `user_id="${pb.authStore.model?.id}"`});
+      empresasRef.current = empresasData;
+      setGetEmpresas(empresasData);
+    };
+    fetchData();
+  }, []);
+
   const mdUp = useResponsive('up', 'md');
 
   const { enqueueSnackbar } = useSnackbar();
@@ -49,6 +61,7 @@ export default function JobNewEditForm({ currentProject }) {
       descripcion: currentProject?.descripcion || '',
       actividades: currentProject?.actividades || '',
       empresa_id: currentProject?.empresa_id,
+      user_id: pb.authStore.model?.id,
     }),
     [currentProject]
   );
@@ -64,18 +77,6 @@ export default function JobNewEditForm({ currentProject }) {
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
-
-  const empresasRef = useRef([]);
-  const [getEmpresas, setGetEmpresas] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const empresasData = await pb.collection('empresas').getFullList({ filter: `user_id="${pb.authStore.model?.id}"`});
-      empresasRef.current = empresasData;
-      setGetEmpresas(empresasData);
-    };
-    fetchData();
-  }, []);
 
   useEffect(() => {
     if (currentProject) {
