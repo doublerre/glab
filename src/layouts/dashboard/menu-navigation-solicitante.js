@@ -4,7 +4,6 @@ import { paths } from 'src/routes/paths';
 // locales
 import { useLocales } from 'src/locales';
 // components
-import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import SvgColor from 'src/components/svg-color';
 
@@ -59,51 +58,19 @@ export function useNavData() {
         items: [
           {
             title: t('Panel'),
-            path: paths.dashboard.root,
+            path: paths.solicitante.root,
             icon: ICONS.dashboard,
-          },
-          {
-            title: t('ecommerce'),
-            path: paths.dashboard.general.ecommerce,
-            icon: ICONS.ecommerce,
-          },
-          {
-            title: t('analytics'),
-            path: paths.dashboard.general.analytics,
-            icon: ICONS.analytics,
-          },
-          {
-            title: t('banking'),
-            path: paths.dashboard.general.banking,
-            icon: ICONS.banking,
-          },
-          {
-            title: t('booking'),
-            path: paths.dashboard.general.booking,
-            icon: ICONS.booking,
-          },
-          {
-            title: t('file'),
-            path: paths.dashboard.general.file,
-            icon: ICONS.file,
-          },
-        ],
-      },
-      // DEMO MENU STATES
-      {
-        subheader: t(t('other_cases')),
-        items: [
-          {
-            // default roles : All roles can see this entry.
-            // roles: ['user'] Only users can see this item.
-            // roles: ['admin'] Only admin can see this item.
-            // roles: ['admin', 'manager'] Only admin/manager can see this item.
-            // Reference from 'src/guards/RoleBasedGuard'.
-            title: t('item_by_roles'),
-            path: paths.dashboard.permission,
-            icon: ICONS.lock,
             roles: ['Solicitante'],
-            caption: t('only_admin_can_see_this_item'),
+          },
+          {
+            title: t('Proyectos'),
+            path: paths.solicitante.proyectos.root,
+            icon: <Iconify icon="octicon:project-16" />,
+            roles: ['Solicitante'],
+            children: [
+              { title: t('Lista'), path: paths.solicitante.proyectos.root },
+              { title: t('Crear'), path: paths.solicitante.proyectos.new },
+            ],
           },
         ],
       },

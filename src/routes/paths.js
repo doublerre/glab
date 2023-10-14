@@ -12,7 +12,7 @@ const ROOTS = {
   AUTH: '/auth',
   AUTH_DEMO: '/auth-demo',
   DASHBOARD: '/dashboard',
-  PANEL: '/panel',
+  SOLICITANTE: '/solicitante',
 };
 
 // ----------------------------------------------------------------------
@@ -179,4 +179,13 @@ export const paths = {
       },
     },
   },
+  // Solicitantes
+  solicitante: {
+    root: ROOTS.SOLICITANTE,
+    proyectos: {
+      root: `${ROOTS.SOLICITANTE}/proyectos`,
+      new: `${ROOTS.SOLICITANTE}/proyectos/crear`,
+    }
+
+  }
 };

@@ -9,6 +9,7 @@ import { authRoutes } from './auth';
 import { authDemoRoutes } from './auth-demo';
 import { dashboardRoutes } from './dashboard';
 import { componentsRoutes } from './components';
+import { solicitanteRoutes } from "./solicitante";
 
 // ----------------------------------------------------------------------
 
@@ -45,6 +46,9 @@ export default function Router() {
     // Components routes
     ...componentsRoutes,
 
+    // Solicitantes routes
+    ...solicitanteRoutes,
+    
     // No match 404
     { path: '*', element: <Navigate to="/404" replace /> },
   ]);

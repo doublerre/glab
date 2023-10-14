@@ -57,12 +57,12 @@ export default function NavVertical({ openNav, onCloseNav }) {
 				user?.role === 'Solicitante' ? <NavSectionVertical
 					data={navDataSolicitante}
 					config={{
-						currentRole: user?.role,
+						currentRole: "Solicitante",
 					}}
 				/> : <NavSectionVertical
 					data={navData}
 					config={{
-						currentRole: user?.role === 'Solicitante' || 'admin',
+						currentRole: user?.role,
 					}}
 				/>
 			}
