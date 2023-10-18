@@ -11,10 +11,12 @@ import { LoadingScreen } from 'src/components/loading-screen';
 
 // Rutas del Solicitante
 const IndexPage = lazy(() => import('src/pages/dashboard/solicitante/panel'));
+// Rutas de los proyectos del solicitante
 const ListPage = lazy(() => import('src/pages/dashboard/solicitante/proyectos/list'))
 const CreateProjectPage = lazy(() => import('src/pages/dashboard/solicitante/proyectos/new'))
 const EditProjectPage = lazy(() => import('src/pages/dashboard/solicitante/proyectos/edit'))
 const ProjectDetailsPage = lazy(() => import('src/pages/dashboard/solicitante/proyectos/details'))
+// Rutas de las instituciónes del solicitante
 
 export const solicitanteRoutes = [
     {
