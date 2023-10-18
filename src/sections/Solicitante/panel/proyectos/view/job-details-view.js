@@ -19,12 +19,16 @@ export default function JobDetailsView({ id }) {
 
   const proyectoRef = useRef([])
   const [proyecto, setProyecto] = useState([])
+  const [imageUrl, setImageUrl] = useState('')
 
   useEffect(() => {
     const fetchData = async () => {
       const currentProject = await pb.collection('proyectos').getOne(id, {expand: "user_id,empresa_id"})
+      const fileToken = await pb.files.getToken();
+      const url = pb.files.getUrl(currentProject.expand.empresa_id, currentProject.expand.empresa_id.image, {'token': fileToken})
       proyectoRef.current = currentProject
       setProyecto(currentProject)
+      setImageUrl(url)
     };
     fetchData();
   }, [id]);
@@ -37,7 +41,7 @@ export default function JobDetailsView({ id }) {
         liveLink="#"
       />
 
-      <JobDetailsContent job={proyecto} />
+      <JobDetailsContent job={proyecto} urlImage={imageUrl}/>
     </Container>
   );
 }

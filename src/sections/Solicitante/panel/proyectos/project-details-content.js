@@ -11,13 +11,15 @@ import ListItemText from '@mui/material/ListItemText';
 import { fDate } from 'src/utils/format-time';
 // MomentJs
 import moment from "moment";
+// PocketBase
+import { pb } from "src/utils/pocketbase";
 // components
 import Iconify from 'src/components/iconify';
 import Markdown from 'src/components/markdown';
 
 // ----------------------------------------------------------------------
 
-export default function JobDetailsContent({ job }) {
+export default function JobDetailsContent({ job, urlImage }) {
   const {
     nombre,
     obj_general,
@@ -25,10 +27,10 @@ export default function JobDetailsContent({ job }) {
     actividades,
     created,
     expand,
-    empresa_id
+    empresa_id,
+    estatus
   } = job;
 
-  const url_image = `https://api.glab.doublerre.com/api/files/empresas/${empresa_id}/${expand?.empresa_id.image}`
   const expired = moment(created).add(1, 'year');
 
   const renderContent = (
@@ -62,6 +64,11 @@ export default function JobDetailsContent({ job }) {
           value: fDate(expired),
           icon: <Iconify icon="solar:calendar-date-bold" />,
         },
+        {
+          label: 'Estado del proyecto',
+          value: estatus,
+          icon: <Iconify icon="mdi:list-status" />,
+        },
       ].map((item) => (
         <Stack key={item.label} spacing={1.5} direction="row">
           {item.icon}
@@ -94,7 +101,7 @@ export default function JobDetailsContent({ job }) {
     >
       <Avatar
         alt={expand?.empresa_id.nombre}
-        src={url_image}
+        src={urlImage}
         variant="rounded"
         sx={{ width: 64, height: 64 }}
       />
@@ -124,4 +131,5 @@ export default function JobDetailsContent({ job }) {
 
 JobDetailsContent.propTypes = {
   job: PropTypes.object,
+  urlImage: PropTypes.string,
 };
