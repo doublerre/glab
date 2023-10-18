@@ -187,7 +187,12 @@ export const paths = {
       new: `${ROOTS.SOLICITANTE}/proyectos/crear`,
       details: (id) => `${ROOTS.SOLICITANTE}/proyectos/${id}`,
       edit: (id) => `${ROOTS.SOLICITANTE}/proyectos/${id}/editar`,
+    },
+    instituciones: {
+      root: `${ROOTS.SOLICITANTE}/instituciones`,
+      new: `${ROOTS.SOLICITANTE}/instituciones/crear`,
+      details: (id) => `${ROOTS.SOLICITANTE}/instituciones/${id}`,
+      edit: (id) => `${ROOTS.SOLICITANTE}/instituciones/${id}/editar`,
     }
-
   }
 };
