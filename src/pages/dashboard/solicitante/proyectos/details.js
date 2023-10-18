@@ -2,8 +2,7 @@ import { Helmet } from 'react-helmet-async';
 // routes
 import { useParams } from 'src/routes/hooks';
 // sections
-import { JobDetailsView } from 'src/sections/job/view';
-
+import { JobDetailsView } from 'src/sections/Solicitante/panel/proyectos/view';
 // ----------------------------------------------------------------------
 
 export default function JobDetailsPage() {
@@ -14,7 +13,7 @@ export default function JobDetailsPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Job Details</title>
+        <title> Dashboard: Detalles del proyecto</title>
       </Helmet>
 
       <JobDetailsView id={`${id}`} />

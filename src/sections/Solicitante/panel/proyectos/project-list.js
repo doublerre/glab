@@ -21,7 +21,7 @@ export default function JobList({ jobs }) {
 
   const handleView = useCallback(
     (id) => {
-      router.push(paths.dashboard.job.details(id));
+      router.push(paths.solicitante.proyectos.details(id));
     },
     [router]
   );
