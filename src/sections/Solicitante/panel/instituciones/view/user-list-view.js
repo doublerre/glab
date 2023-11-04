@@ -16,8 +16,6 @@ import TableContainer from '@mui/material/TableContainer';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
-// _mock
-import { _userList, _roles, USER_STATUS_OPTIONS } from 'src/_mock';
 // PocketBase
 import { pb } from "src/utils/pocketbase";
 // hooks
@@ -78,8 +76,6 @@ export default function UserListView() {
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState(_userList);
-
   const institucionesRef = useRef([])
   const [instituciones, setInstituciones] = useState([])
 
@@ -124,24 +120,24 @@ export default function UserListView() {
 
   const handleDeleteRow = useCallback(
     (id) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
-      setTableData(deleteRow);
+      const deleteRow = instituciones.filter((row) => row.id !== id);
+      setInstituciones(deleteRow);
 
       table.onUpdatePageDeleteRow(dataInPage.length);
     },
-    [dataInPage.length, table, tableData]
+    [dataInPage.length, table, instituciones]
   );
 
   const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
-    setTableData(deleteRows);
+    const deleteRows = instituciones.filter((row) => !table.selected.includes(row.id));
+    setInstituciones(deleteRows);
 
     table.onUpdatePageDeleteRows({
-      totalRows: tableData.length,
+      totalRows: instituciones.length,
       totalRowsInPage: dataInPage.length,
       totalRowsFiltered: dataFiltered.length,
     });
-  }, [dataFiltered.length, dataInPage.length, table, tableData]);
+  }, [dataFiltered.length, dataInPage.length, table, instituciones]);
 
   const handleEditRow = useCallback(
     (id) => {
@@ -247,11 +243,11 @@ export default function UserListView() {
             <TableSelectedAction
               dense={table.dense}
               numSelected={table.selected.length}
-              rowCount={tableData.length}
+              rowCount={instituciones.length}
               onSelectAllRows={(checked) =>
                 table.onSelectAllRows(
                   checked,
-                  tableData.map((row) => row.id)
+                  instituciones.map((row) => row.id)
                 )
               }
               action={
@@ -269,13 +265,13 @@ export default function UserListView() {
                   order={table.order}
                   orderBy={table.orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={tableData.length}
+                  rowCount={instituciones.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
                   onSelectAllRows={(checked) =>
                     table.onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      instituciones.map((row) => row.id)
                     )
                   }
                 />
@@ -299,7 +295,7 @@ export default function UserListView() {
 
                   <TableEmptyRows
                     height={denseHeight}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
+                    emptyRows={emptyRows(table.page, table.rowsPerPage, instituciones.length)}
                   />
 
                   <TableNoData notFound={notFound} />
