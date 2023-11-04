@@ -16,17 +16,17 @@ export default function UserCreateView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading="Create a new user"
+        heading="Crear nueva institución"
         links={[
           {
             name: 'Dashboard',
             href: paths.dashboard.root,
           },
           {
-            name: 'User',
-            href: paths.dashboard.user.root,
+            name: 'Instituciones',
+            href: paths.solicitante.instituciones.root,
           },
-          { name: 'New user' },
+          { name: 'Nueva institución' },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
