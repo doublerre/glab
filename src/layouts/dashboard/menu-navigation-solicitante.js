@@ -64,7 +64,7 @@ export function useNavData() {
           },
           {
             title: t('Instituciones'),
-            path: paths.solicitante.proyectos.root,
+            path: paths.solicitante.instituciones.root,
             icon: <Iconify icon="bxs:school" />,
             roles: ['Solicitante'],
             children: [
