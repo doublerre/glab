@@ -170,7 +170,7 @@ export default function UserListView() {
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.user.new}
+              href={paths.solicitante.instituciones.new}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >

@@ -18,6 +18,7 @@ const EditProjectPage = lazy(() => import('src/pages/dashboard/solicitante/proye
 const ProjectDetailsPage = lazy(() => import('src/pages/dashboard/solicitante/proyectos/details'))
 // Rutas de las instituciónes del solicitante
 const ListInstitucionesPage = lazy(() => import('src/pages/dashboard/solicitante/instituciones/list'))
+const CreateInstitucionesPage = lazy(() => import('src/pages/dashboard/solicitante/instituciones/new'))
 
 export const solicitanteRoutes = [
     {
@@ -50,6 +51,7 @@ export const solicitanteRoutes = [
                 children: [
                     {element: <ListInstitucionesPage />, index: true},
                     {path: 'lista', element: <ListInstitucionesPage /> },
+                    {path: 'crear', element: <CreateInstitucionesPage />}
                 ]
             },
         ]
