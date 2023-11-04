@@ -1,17 +1,17 @@
 import { Helmet } from 'react-helmet-async';
 // sections
-import { ProductListView } from 'src/sections/product/view';
+import { UserListView } from 'src/sections/Solicitante/panel/instituciones/view';
 
 // ----------------------------------------------------------------------
 
-export default function ProductListPage() {
+export default function UserListPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Product List</title>
+        <title> Dashboard: Lista de instituciones</title>
       </Helmet>
 
-      <ProductListView />
+      <UserListView />
     </>
   );
 }
