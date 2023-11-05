@@ -29,14 +29,14 @@ import { useSettingsContext } from 'src/components/settings';
 import { useSnackbar } from 'src/components/snackbar';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import {
-  useTable,
-  getComparator,
-  emptyRows,
-  TableNoData,
-  TableEmptyRows,
-  TableHeadCustom,
-  TableSelectedAction,
-  TablePaginationCustom,
+	useTable,
+	getComparator,
+	emptyRows,
+	TableNoData,
+	TableEmptyRows,
+	TableHeadCustom,
+	TableSelectedAction,
+	TablePaginationCustom,
 } from 'src/components/table';
 //
 import UserTableRow from '../user-table-row';
@@ -46,351 +46,355 @@ import UserTableFiltersResult from '../user-table-filters-result';
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [
-  { value: 'all', label: 'Todas' },
-  { value: 'Aceptado', label: 'Aceptadas' },
-  { value: 'En revisión', label: 'En revisión' },
-  { value: 'Rechazado', label: 'Rechazado' },
+	{ value: 'all', label: 'Todas' },
+	{ value: 'Aceptado', label: 'Aceptadas' },
+	{ value: 'En revisión', label: 'En revisión' },
+	{ value: 'Rechazado', label: 'Rechazado' },
 ];
 
 const TABLE_HEAD = [
-  { id: 'nombre', label: 'Nombre' },
-  { id: 'direccion', label: 'Dirección', width: 250 },
-  { id: 'giro', label: 'Giro', width: 250 },
-  { id: 'estatus', label: 'Estatus', width: 180 },
-  { id: '', width: 88 },
+	{ id: 'nombre', label: 'Nombre' },
+	{ id: 'direccion', label: 'Dirección', width: 250 },
+	{ id: 'giro', label: 'Giro', width: 250 },
+	{ id: 'estatus', label: 'Estatus', width: 180 },
+	{ id: '', width: 88 },
 ];
 
 const defaultFilters = {
-  nombre: '',
-  direccion: [],
-  estatus: 'all',
+	nombre: '',
+	direccion: [],
+	estatus: 'all',
 };
 
 // ----------------------------------------------------------------------
 
 export default function UserListView() {
-  const table = useTable();
+	const table = useTable();
 
-  const { enqueueSnackbar } = useSnackbar();
+	const { enqueueSnackbar } = useSnackbar();
 
-  const settings = useSettingsContext();
+	const settings = useSettingsContext();
 
-  const router = useRouter();
+	const router = useRouter();
 
-  const confirm = useBoolean();
+	const confirm = useBoolean();
 
-  const institucionesRef = useRef([])
-  const [instituciones, setInstituciones] = useState([])
+	const institucionesRef = useRef([])
+	const [instituciones, setInstituciones] = useState([])
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const institucionesData = await pb.collection('empresas').getFullList({filter: `user_id="${pb.authStore.model?.id}"`});
-      institucionesRef.current = institucionesData;
-      setInstituciones(institucionesData);
-    };
-    fetchData();
-  }, []);
+	useEffect(() => {
+		const fetchData = async () => {
+			const institucionesData = await pb.collection('empresas').getFullList({ filter: `user_id="${pb.authStore.model?.id}" && trash="0"` });
+			institucionesRef.current = institucionesData;
+			setInstituciones(institucionesData);
+		};
+		fetchData();
+	}, []);
 
-  const [filters, setFilters] = useState(defaultFilters);
+	const [filters, setFilters] = useState(defaultFilters);
 
-  const dataFiltered = applyFilter({
-    inputData: instituciones,
-    comparator: getComparator(table.order, table.orderBy),
-    filters,
-  });
+	const dataFiltered = applyFilter({
+		inputData: instituciones,
+		comparator: getComparator(table.order, table.orderBy),
+		filters,
+	});
 
-  const dataInPage = dataFiltered.slice(
-    table.page * table.rowsPerPage,
-    table.page * table.rowsPerPage + table.rowsPerPage
-  );
+	const dataInPage = dataFiltered.slice(
+		table.page * table.rowsPerPage,
+		table.page * table.rowsPerPage + table.rowsPerPage
+	);
 
-  const denseHeight = table.dense ? 52 : 72;
+	const denseHeight = table.dense ? 52 : 72;
 
-  const canReset = !isEqual(defaultFilters, filters);
+	const canReset = !isEqual(defaultFilters, filters);
 
-  const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
+	const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
-  const handleFilters = useCallback(
-    (name, value) => {
-      table.onResetPage();
-      setFilters((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }));
-    },
-    [table]
-  );
+	const handleFilters = useCallback(
+		(name, value) => {
+			table.onResetPage();
+			setFilters((prevState) => ({
+				...prevState,
+				[name]: value,
+			}));
+		},
+		[table]
+	);
 
-  const handleDeleteRow = useCallback(
-    async (id) => {
-      try{
-        await pb.collection('empresas').delete(id);
-        const deleteRow = instituciones.filter((row) => row.id !== id);
-        setInstituciones(deleteRow);
+	const handleDeleteRow = useCallback(
+		async (id) => {
+			try {
+				const data = {
+					trash: true,
+				}
 
-        table.onUpdatePageDeleteRow(dataInPage.length);
-        enqueueSnackbar('Institución eliminada.');
-      }catch(e){
-        console.error(e);
-      }
-      
-    },
-    [dataInPage.length, table, instituciones, enqueueSnackbar]
-  );
+				await pb.collection('empresas').update(id, data)
+				const deleteRow = instituciones.filter((row) => row.id !== id);
+				setInstituciones(deleteRow);
 
-  const handleDeleteRows = useCallback(() => {
-    try{
-      const data = {
-        trash: true,
-      }
-      const deleteRows = instituciones.filter((row) => !table.selected.includes(row.id));
-      table.selected.map((institucion_id) => pb.collection('empresas').update(institucion_id, data));
-      setInstituciones(deleteRows);
+				table.onUpdatePageDeleteRow(dataInPage.length);
+				enqueueSnackbar('Institución eliminada.');
+			} catch (e) {
+				console.error(e);
+			}
 
-      table.onUpdatePageDeleteRows({
-        totalRows: instituciones.length,
-        totalRowsInPage: dataInPage.length,
-        totalRowsFiltered: dataFiltered.length,
-      });
-      enqueueSnackbar('Elementos eliminados.');
-    }catch(e){
-      console.error(e);
-    }
-    
-  }, [dataFiltered.length, dataInPage.length, table, instituciones, enqueueSnackbar]);
+		},
+		[dataInPage.length, table, instituciones, enqueueSnackbar]
+	);
 
-  const handleEditRow = useCallback(
-    (id) => {
-      router.push(paths.dashboard.user.edit(id));
-    },
-    [router]
-  );
+	const handleDeleteRows = useCallback(() => {
+		try {
+			const data = {
+				trash: true,
+			}
+			const deleteRows = instituciones.filter((row) => !table.selected.includes(row.id));
+			table.selected.map((institucion_id) => pb.collection('empresas').update(institucion_id, data));
+			setInstituciones(deleteRows);
 
-  const handleFilterStatus = useCallback(
-    (event, newValue) => {
-      handleFilters('estatus', newValue);
-    },
-    [handleFilters]
-  );
+			table.onUpdatePageDeleteRows({
+				totalRows: instituciones.length,
+				totalRowsInPage: dataInPage.length,
+				totalRowsFiltered: dataFiltered.length,
+			});
+			enqueueSnackbar('Elementos eliminados.');
+		} catch (e) {
+			console.error(e);
+		}
 
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters);
-  }, []);
+	}, [dataFiltered.length, dataInPage.length, table, instituciones, enqueueSnackbar]);
 
-  return (
-    <>
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <CustomBreadcrumbs
-          heading="List"
-          links={[
-            { name: 'Dashboard', href: paths.solicitante.root },
-            { name: 'Instituciones', href: paths.solicitante.instituciones.root },
-            { name: 'Lista' },
-          ]}
-          action={
-            <Button
-              component={RouterLink}
-              href={paths.solicitante.instituciones.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              Nueva Institución
-            </Button>
-          }
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
-        />
+	const handleEditRow = useCallback(
+		(id) => {
+			router.push(paths.dashboard.user.edit(id));
+		},
+		[router]
+	);
 
-        <Card>
-          <Tabs
-            value={filters.estatus}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-            }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab
-                key={tab.value}
-                iconPosition="end"
-                value={tab.value}
-                label={tab.label}
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === filters.estatus) && 'filled') || 'soft'
-                    }
-                    color={
-                      (tab.value === 'Aceptado' && 'success') ||
-                      (tab.value === 'En revisión' && 'warning') ||
-                      (tab.value === 'Rechazado' && 'error') ||
-                      'default'
-                    }
-                  >
-                    {tab.value === 'all' && instituciones.length}
-                    {tab.value === 'Aceptado' &&
-                      instituciones.filter((institucion) => institucion.estatus === 'Aceptado').length}
-                    {tab.value === 'En revisión' &&
-                      instituciones.filter((institucion) => institucion.estatus === 'En revisión').length}
-                    {tab.value === 'Rechazado' &&
-                      instituciones.filter((institucion) => institucion.estatus === 'Rechzado').length}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs>
+	const handleFilterStatus = useCallback(
+		(event, newValue) => {
+			handleFilters('estatus', newValue);
+		},
+		[handleFilters]
+	);
 
-          <UserTableToolbar
-            filters={filters}
-            onFilters={handleFilters}
-          />
+	const handleResetFilters = useCallback(() => {
+		setFilters(defaultFilters);
+	}, []);
 
-          {canReset && (
-            <UserTableFiltersResult
-              filters={filters}
-              onFilters={handleFilters}
-              //
-              onResetFilters={handleResetFilters}
-              //
-              results={dataFiltered.length}
-              sx={{ p: 2.5, pt: 0 }}
-            />
-          )}
+	return (
+		<>
+			<Container maxWidth={settings.themeStretch ? false : 'lg'}>
+				<CustomBreadcrumbs
+					heading="Lista de instituciones"
+					links={[
+						{ name: 'Dashboard', href: paths.solicitante.root },
+						{ name: 'Instituciones', href: paths.solicitante.instituciones.root },
+						{ name: 'Lista' },
+					]}
+					action={
+						<Button
+							component={RouterLink}
+							href={paths.solicitante.instituciones.new}
+							variant="contained"
+							startIcon={<Iconify icon="mingcute:add-line" />}
+						>
+							Nueva Institución
+						</Button>
+					}
+					sx={{
+						mb: { xs: 3, md: 5 },
+					}}
+				/>
 
-          <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-            <TableSelectedAction
-              dense={table.dense}
-              numSelected={table.selected.length}
-              rowCount={instituciones.length}
-              onSelectAllRows={(checked) =>
-                table.onSelectAllRows(
-                  checked,
-                  instituciones.map((row) => row.id)
-                )
-              }
-              action={
-                <Tooltip title="Delete">
-                  <IconButton color="primary" onClick={confirm.onTrue}>
-                    <Iconify icon="solar:trash-bin-trash-bold" />
-                  </IconButton>
-                </Tooltip>
-              }
-            />
+				<Card>
+					<Tabs
+						value={filters.estatus}
+						onChange={handleFilterStatus}
+						sx={{
+							px: 2.5,
+							boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
+						}}
+					>
+						{STATUS_OPTIONS.map((tab) => (
+							<Tab
+								key={tab.value}
+								iconPosition="end"
+								value={tab.value}
+								label={tab.label}
+								icon={
+									<Label
+										variant={
+											((tab.value === 'all' || tab.value === filters.estatus) && 'filled') || 'soft'
+										}
+										color={
+											(tab.value === 'Aceptado' && 'success') ||
+											(tab.value === 'En revisión' && 'warning') ||
+											(tab.value === 'Rechazado' && 'error') ||
+											'default'
+										}
+									>
+										{tab.value === 'all' && instituciones.length}
+										{tab.value === 'Aceptado' &&
+											instituciones.filter((institucion) => institucion.estatus === 'Aceptado').length}
+										{tab.value === 'En revisión' &&
+											instituciones.filter((institucion) => institucion.estatus === 'En revisión').length}
+										{tab.value === 'Rechazado' &&
+											instituciones.filter((institucion) => institucion.estatus === 'Rechzado').length}
+									</Label>
+								}
+							/>
+						))}
+					</Tabs>
 
-            <Scrollbar>
-              <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
-                <TableHeadCustom
-                  order={table.order}
-                  orderBy={table.orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={instituciones.length}
-                  numSelected={table.selected.length}
-                  onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      instituciones.map((row) => row.id)
-                    )
-                  }
-                />
+					<UserTableToolbar
+						filters={filters}
+						onFilters={handleFilters}
+					/>
 
-                <TableBody>
-                  {dataFiltered
-                    .slice(
-                      table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
-                    )
-                    .map((row) => (
-                      <UserTableRow
-                        key={row.id}
-                        row={row}
-                        selected={table.selected.includes(row.id)}
-                        onSelectRow={() => table.onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        onEditRow={() => handleEditRow(row.id)}
-                      />
-                    ))}
+					{canReset && (
+						<UserTableFiltersResult
+							filters={filters}
+							onFilters={handleFilters}
+							//
+							onResetFilters={handleResetFilters}
+							//
+							results={dataFiltered.length}
+							sx={{ p: 2.5, pt: 0 }}
+						/>
+					)}
 
-                  <TableEmptyRows
-                    height={denseHeight}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, instituciones.length)}
-                  />
+					<TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+						<TableSelectedAction
+							dense={table.dense}
+							numSelected={table.selected.length}
+							rowCount={instituciones.length}
+							onSelectAllRows={(checked) =>
+								table.onSelectAllRows(
+									checked,
+									instituciones.map((row) => row.id)
+								)
+							}
+							action={
+								<Tooltip title="Delete">
+									<IconButton color="primary" onClick={confirm.onTrue}>
+										<Iconify icon="solar:trash-bin-trash-bold" />
+									</IconButton>
+								</Tooltip>
+							}
+						/>
 
-                  <TableNoData notFound={notFound} />
-                </TableBody>
-              </Table>
-            </Scrollbar>
-          </TableContainer>
+						<Scrollbar>
+							<Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
+								<TableHeadCustom
+									order={table.order}
+									orderBy={table.orderBy}
+									headLabel={TABLE_HEAD}
+									rowCount={instituciones.length}
+									numSelected={table.selected.length}
+									onSort={table.onSort}
+									onSelectAllRows={(checked) =>
+										table.onSelectAllRows(
+											checked,
+											instituciones.map((row) => row.id)
+										)
+									}
+								/>
 
-          <TablePaginationCustom
-            count={dataFiltered.length}
-            page={table.page}
-            rowsPerPage={table.rowsPerPage}
-            onPageChange={table.onChangePage}
-            onRowsPerPageChange={table.onChangeRowsPerPage}
-            //
-            dense={table.dense}
-            onChangeDense={table.onChangeDense}
-          />
-        </Card>
-      </Container>
+								<TableBody>
+									{dataFiltered
+										.slice(
+											table.page * table.rowsPerPage,
+											table.page * table.rowsPerPage + table.rowsPerPage
+										)
+										.map((row) => (
+											<UserTableRow
+												key={row.id}
+												row={row}
+												selected={table.selected.includes(row.id)}
+												onSelectRow={() => table.onSelectRow(row.id)}
+												onDeleteRow={() => handleDeleteRow(row.id)}
+												onEditRow={() => handleEditRow(row.id)}
+											/>
+										))}
 
-      <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
-        title="Eliminar Institución"
-        content={
-          <>
-            ¿Estas seguro de que quieres eliminar <strong> {table.selected.length} </strong> elementos?
-          </>
-        }
-        action={
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => {
-              handleDeleteRows();
-              confirm.onFalse();
-            }}
-          >
-            Eliminar
-          </Button>
-        }
-      />
-    </>
-  );
+									<TableEmptyRows
+										height={denseHeight}
+										emptyRows={emptyRows(table.page, table.rowsPerPage, instituciones.length)}
+									/>
+
+									<TableNoData notFound={notFound} />
+								</TableBody>
+							</Table>
+						</Scrollbar>
+					</TableContainer>
+
+					<TablePaginationCustom
+						count={dataFiltered.length}
+						page={table.page}
+						rowsPerPage={table.rowsPerPage}
+						onPageChange={table.onChangePage}
+						onRowsPerPageChange={table.onChangeRowsPerPage}
+						//
+						dense={table.dense}
+						onChangeDense={table.onChangeDense}
+					/>
+				</Card>
+			</Container>
+
+			<ConfirmDialog
+				open={confirm.value}
+				onClose={confirm.onFalse}
+				title="Eliminar Institución"
+				content={
+					<>
+						¿Estas seguro de que quieres eliminar <strong> {table.selected.length} </strong> elementos?
+					</>
+				}
+				action={
+					<Button
+						variant="contained"
+						color="error"
+						onClick={() => {
+							handleDeleteRows();
+							confirm.onFalse();
+						}}
+					>
+						Eliminar
+					</Button>
+				}
+			/>
+		</>
+	);
 }
 
 // ----------------------------------------------------------------------
 
 function applyFilter({ inputData, comparator, filters }) {
-  const { nombre, estatus, direccion } = filters;
+	const { nombre, estatus, direccion } = filters;
 
-  const stabilizedThis = inputData.map((el, index) => [el, index]);
+	const stabilizedThis = inputData.map((el, index) => [el, index]);
 
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
+	stabilizedThis.sort((a, b) => {
+		const order = comparator(a[0], b[0]);
+		if (order !== 0) return order;
+		return a[1] - b[1];
+	});
 
-  inputData = stabilizedThis.map((el) => el[0]);
+	inputData = stabilizedThis.map((el) => el[0]);
 
-  if (nombre) {
-    inputData = inputData.filter(
-      (user) => user.nombre.toLowerCase().indexOf(nombre.toLowerCase()) !== -1
-    );
-  }
+	if (nombre) {
+		inputData = inputData.filter(
+			(user) => user.nombre.toLowerCase().indexOf(nombre.toLowerCase()) !== -1
+		);
+	}
 
-  if (estatus !== 'all') {
-    inputData = inputData.filter((user) => user.estatus === estatus);
-  }
+	if (estatus !== 'all') {
+		inputData = inputData.filter((user) => user.estatus === estatus);
+	}
 
-  if (direccion.length) {
-    inputData = inputData.filter((user) => direccion.includes(user.direccion));
-  }
+	if (direccion.length) {
+		inputData = inputData.filter((user) => direccion.includes(user.direccion));
+	}
 
-  return inputData;
+	return inputData;
 }
