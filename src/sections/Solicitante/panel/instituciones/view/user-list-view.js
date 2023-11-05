@@ -26,6 +26,7 @@ import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useSettingsContext } from 'src/components/settings';
+import { useSnackbar } from 'src/components/snackbar';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import {
   useTable,
@@ -69,6 +70,8 @@ const defaultFilters = {
 
 export default function UserListView() {
   const table = useTable();
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const settings = useSettingsContext();
 
@@ -119,25 +122,42 @@ export default function UserListView() {
   );
 
   const handleDeleteRow = useCallback(
-    (id) => {
-      const deleteRow = instituciones.filter((row) => row.id !== id);
-      setInstituciones(deleteRow);
+    async (id) => {
+      try{
+        await pb.collection('empresas').delete(id);
+        const deleteRow = instituciones.filter((row) => row.id !== id);
+        setInstituciones(deleteRow);
 
-      table.onUpdatePageDeleteRow(dataInPage.length);
+        table.onUpdatePageDeleteRow(dataInPage.length);
+        enqueueSnackbar('Institución eliminada.');
+      }catch(e){
+        console.error(e);
+      }
+      
     },
-    [dataInPage.length, table, instituciones]
+    [dataInPage.length, table, instituciones, enqueueSnackbar]
   );
 
   const handleDeleteRows = useCallback(() => {
-    const deleteRows = instituciones.filter((row) => !table.selected.includes(row.id));
-    setInstituciones(deleteRows);
+    try{
+      const data = {
+        trash: true,
+      }
+      const deleteRows = instituciones.filter((row) => !table.selected.includes(row.id));
+      table.selected.map((institucion_id) => pb.collection('empresas').update(institucion_id, data));
+      setInstituciones(deleteRows);
 
-    table.onUpdatePageDeleteRows({
-      totalRows: instituciones.length,
-      totalRowsInPage: dataInPage.length,
-      totalRowsFiltered: dataFiltered.length,
-    });
-  }, [dataFiltered.length, dataInPage.length, table, instituciones]);
+      table.onUpdatePageDeleteRows({
+        totalRows: instituciones.length,
+        totalRowsInPage: dataInPage.length,
+        totalRowsFiltered: dataFiltered.length,
+      });
+      enqueueSnackbar('Elementos eliminados.');
+    }catch(e){
+      console.error(e);
+    }
+    
+  }, [dataFiltered.length, dataInPage.length, table, instituciones, enqueueSnackbar]);
 
   const handleEditRow = useCallback(
     (id) => {
