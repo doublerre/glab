@@ -35,7 +35,7 @@ export default function JobNewEditForm({ currentProject }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const empresasData = await pb.collection('empresas').getFullList({ filter: `user_id="${pb.authStore.model?.id}"`});
+      const empresasData = await pb.collection('empresas').getFullList({ filter: `user_id="${pb.authStore.model?.id}" && estatus="Aceptado"`});
       empresasRef.current = empresasData;
       setGetEmpresas(empresasData);
     };
