@@ -62,6 +62,7 @@ export default function JobNewEditForm({ currentProject }) {
       actividades: currentProject?.actividades || '',
       empresa_id: currentProject?.empresa_id,
       user_id: pb.authStore.model?.id,
+      estatus: "En revision"
     }),
     [currentProject]
   );
