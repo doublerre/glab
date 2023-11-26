@@ -13,6 +13,7 @@ const ROOTS = {
   AUTH_DEMO: '/auth-demo',
   DASHBOARD: '/dashboard',
   SOLICITANTE: '/solicitante',
+  ESTUDIANTE: '/estudiante',
 };
 
 // ----------------------------------------------------------------------
@@ -194,5 +195,9 @@ export const paths = {
       details: (id) => `${ROOTS.SOLICITANTE}/instituciones/${id}`,
       edit: (id) => `${ROOTS.SOLICITANTE}/instituciones/${id}/editar`,
     }
+  },
+  // Estudiantes
+  estudiante: {
+    root: ROOTS.ESTUDIANTE,
   }
 };

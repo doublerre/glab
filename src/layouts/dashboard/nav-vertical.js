@@ -17,6 +17,7 @@ import { NavSectionVertical } from 'src/components/nav-section';
 import { NAV } from '../config-layout';
 import { useNavData } from './config-navigation';
 import { useNavData as NavSolicitante } from './menu-navigation-solicitante';
+import { useNavData as NavEstudiante } from "./menu-navigation-estudiante";
 import { NavToggleButton, NavUpgrade } from '../_common';
 
 // ----------------------------------------------------------------------
@@ -31,6 +32,7 @@ export default function NavVertical({ openNav, onCloseNav }) {
 	const navData = useNavData();
 
 	const navDataSolicitante = NavSolicitante();
+	const navDataEstudiante = NavEstudiante();
 
 
 	useEffect(() => {
@@ -54,18 +56,23 @@ export default function NavVertical({ openNav, onCloseNav }) {
 		>
 			<Logo sx={{ mt: 3, ml: 4, mb: 1 }} />
 			{
-				user?.role === 'Solicitante' ? <NavSectionVertical
-					data={navDataSolicitante}
-					config={{
-						currentRole: "Solicitante",
-					}}
-				/> : <NavSectionVertical
-					data={navData}
-					config={{
-						currentRole: user?.role,
-					}}
-				/>
-			}
+				user?.role === 'Solicitante' && (
+					<NavSectionVertical
+						data={navDataSolicitante}
+						config={{
+							currentRole: "Solicitante",
+						}}
+					/>
+				)}
+			{
+				user?.role === 'Estudiante' && (
+					<NavSectionVertical
+						data={navDataEstudiante}
+						config={{
+							currentRole: "Estudiante",
+						}}
+					/>
+				)}
 			<Box sx={{ flexGrow: 1 }} />
 
 			<NavUpgrade />
