@@ -13,6 +13,7 @@ import { NavSectionHorizontal } from 'src/components/nav-section';
 import { HEADER } from '../config-layout';
 import { useNavData } from './config-navigation';
 import { useNavData as NavSolicitante } from './menu-navigation-solicitante';
+import { useNavData as NavEstudiante } from "./menu-navigation-estudiante";
 import { HeaderShadow } from '../_common';
 
 // ----------------------------------------------------------------------
@@ -24,6 +25,7 @@ function NavHorizontal() {
 
 	const navData = useNavData();
 	const navDataSolicitante = NavSolicitante();
+	const navDataEstudiante = NavEstudiante();
 	return (
 		<AppBar
 			component="nav"
@@ -39,18 +41,23 @@ function NavHorizontal() {
 				}}
 			>
 				{
-					user?.role === 'Solicitante' ? <NavSectionHorizontal
-						data={navDataSolicitante}
-						config={{
-							currentRole: "Solicitante",
-						}}
-					/> : <NavSectionHorizontal
-						data={navData}
-						config={{
-							currentRole: user?.role,
-						}}
-					/>
-				}
+					user?.role === 'Solicitante' && (
+						<NavSectionHorizontal
+							data={navDataSolicitante}
+							config={{
+								currentRole: "Solicitante",
+							}}
+						/>
+					)}
+				{
+					user?.role === 'Estudiante' && (
+						<NavSectionHorizontal
+							data={navDataEstudiante}
+							config={{
+								currentRole: "Estudiante",
+							}}
+						/>
+					)}
 			</Toolbar>
 
 			<HeaderShadow />

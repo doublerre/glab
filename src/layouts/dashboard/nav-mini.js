@@ -12,6 +12,7 @@ import { NavSectionMini } from 'src/components/nav-section';
 import { NAV } from '../config-layout';
 import { useNavData } from './config-navigation';
 import { useNavData as NavSolicitante } from './menu-navigation-solicitante';
+import { useNavData as NavEstudiante } from "./menu-navigation-estudiante";
 import { NavToggleButton } from '../_common';
 
 // ----------------------------------------------------------------------
@@ -21,6 +22,7 @@ export default function NavMini() {
 
 	const navData = useNavData();
 	const navDataSolicitante = NavSolicitante();
+	const navDataEstudiante = NavEstudiante();
 
 	return (
 		<Box
@@ -49,18 +51,23 @@ export default function NavMini() {
 			>
 				<Logo sx={{ mx: 'auto', my: 2 }} />
 				{
-				user?.role === 'Solicitante' ? <NavSectionMini
-					data={navDataSolicitante}
-					config={{
-						currentRole: "Solicitante",
-					}}
-				/> : <NavSectionMini
-					data={navData}
-					config={{
-						currentRole: user?.role,
-					}}
-				/>
-			}
+					user?.role === 'Solicitante' && (
+						<NavSectionMini
+							data={navDataSolicitante}
+							config={{
+								currentRole: "Solicitante",
+							}}
+						/>
+					)}
+				{
+					user?.role === 'Estudiante' && (
+						<NavSectionMini
+							data={navDataEstudiante}
+							config={{
+								currentRole: "Estudiante",
+							}}
+						/>
+					)}
 			</Stack>
 		</Box>
 	);
