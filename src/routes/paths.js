@@ -199,5 +199,8 @@ export const paths = {
   // Estudiantes
   estudiante: {
     root: ROOTS.ESTUDIANTE,
+    solicitudes: {
+      root: (id) => `${ROOTS.ESTUDIANTE}/solicitud/proyectos/${id}`,
+    }
   }
 };
